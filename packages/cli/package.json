@@ -1,0 +1,21 @@
+{
+  "name": "@telemetriq/cli",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "telemetriq": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@telemetriq/core": "workspace:*"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0"
+  }
+}

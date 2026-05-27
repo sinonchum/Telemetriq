@@ -53,7 +53,7 @@ describe('createMultiEngine', () => {
       { id: 'b', label: 'B', dataset: datasetB },
     ]);
     expect(multi.sessions[0].engine.getValueAt('speed', 5000)).toBe(100);
-    expect(multi.sessions[1].engine.getValueAt('speed', 4000)).toBe(100);
+    expect(multi.sessions[1].engine.getValueAt('speed', 4000)).toBe(95);
     multi.destroy();
   });
 

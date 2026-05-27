@@ -1,4 +1,5 @@
-import { createTelemetriqEngine, type TelemetriqDataset, type TelemetriqEngine, type TelemetriqEngineOptions } from '../createTelemetriqEngine';
+import { createTelemetriqEngine, type TelemetriqEngine, type TelemetriqEngineOptions } from '../createTelemetriqEngine';
+import type { TelemetriqDataset } from '../types';
 import { PlaybackController, type PlaybackState } from '../playback/PlaybackController';
 
 export type MultiEngineSession = {
