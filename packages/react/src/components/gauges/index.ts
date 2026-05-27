@@ -1,6 +1,10 @@
 export { NumericGauge } from './NumericGauge';
 export { LinearGauge } from './LinearGauge';
 export { GForceCircle } from './GForceCircle';
+export { SteeringGauge } from './SteeringGauge';
+export { GearIndicator } from './GearIndicator';
 export type { NumericGaugeProps } from './NumericGauge';
 export type { LinearGaugeProps } from './LinearGauge';
 export type { GForceCircleProps } from './GForceCircle';
+export type { SteeringGaugeProps } from './SteeringGauge';
+export type { GearIndicatorProps } from './GearIndicator';

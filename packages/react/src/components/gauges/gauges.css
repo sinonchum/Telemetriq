@@ -46,3 +46,24 @@
   margin-top: 4px;
   font-variant-numeric: tabular-nums;
 }
+.tq-steering-gauge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.tq-steering-label {
+  font-size: 12px;
+  margin-top: 4px;
+  font-variant-numeric: tabular-nums;
+}
+.tq-gear-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.tq-gear-value {
+  font-size: 48px;
+  font-weight: 700;
+  font-family: monospace;
+  line-height: 1;
+}
