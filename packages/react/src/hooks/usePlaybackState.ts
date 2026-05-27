@@ -8,7 +8,7 @@ export function usePlaybackState(): PlaybackState {
   const engine = useTelemetriq();
   const stateRef = useRef<PlaybackState>(DEFAULT_STATE);
   const subscribe = useCallback((onStoreChange: () => void) => {
-    return engine.subscribeState((state) => { stateRef.current = state; onStoreChange(); });
+    return engine.subscribeState((state: PlaybackState) => { stateRef.current = state; onStoreChange(); });
   }, [engine]);
   const getSnapshot = useCallback(() => stateRef.current, []);
   return useSyncExternalStore(subscribe, getSnapshot);
