@@ -19,6 +19,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@telemetriq/core": "workspace:*",
     "uplot": "^1.6.31"
   },
   "peerDependencies": {
@@ -26,8 +27,9 @@
     "react-dom": ">=18.0.0"
   },
   "devDependencies": {
-    "@types/uplot": "^1.6.8",
+    "@testing-library/react": "^14.2.0",
     "@types/react": "^18.2.0",
+    "jsdom": "^24.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tsup": "^8.0.0",
