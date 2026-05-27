@@ -3,3 +3,4 @@ dist/
 .vitepress/.temp
 *.tsbuildinfo
 .DS_Store
+storybook-static/
