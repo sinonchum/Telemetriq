@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react';
+import type { Vector3, Mesh } from 'three';
 import { useTelemetriq } from '../../hooks/useTelemetriq';
 
 export type PathRenderer3DProps = {
@@ -75,7 +76,7 @@ export function PathRenderer3D({
       scene.add(axes);
 
       // Collect path points
-      const points: THREE.Vector3[] = [];
+      const points: Vector3[] = [];
       const colors: number[] = [];
       const duration = 10000;
       const step = 50;
@@ -110,7 +111,7 @@ export function PathRenderer3D({
       }
 
       // Marker sphere
-      let markerMesh: THREE.Mesh | null = null;
+      let markerMesh: Mesh | null = null;
       if (marker.visible && points.length > 0) {
         const markerGeo = new THREE.SphereGeometry(marker.radius || 0.5, 16, 16);
         const markerMat = new THREE.MeshBasicMaterial({ color: hexToColor(marker.color || '#06b6d4') });
