@@ -3,7 +3,16 @@
   "version": "0.1.0",
   "description": "React components and hooks for Telemetriq — high-frequency spatial time-series visualization",
   "type": "module",
-  "keywords": ["telemetry", "timeseries", "visualization", "react", "canvas", "uplot", "racing", "drone"],
+  "keywords": [
+    "telemetry",
+    "timeseries",
+    "visualization",
+    "react",
+    "canvas",
+    "uplot",
+    "racing",
+    "drone"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -20,7 +29,10 @@
       "require": "./dist/index.cjs"
     }
   },
-  "files": ["dist", "README.md"],
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts --external react --external three",
     "typecheck": "tsc --noEmit",
@@ -32,7 +44,7 @@
   "dependencies": {
     "@telemetriq/core": "workspace:*",
     "leaflet": "^1.9.4",
-    "three": "^0.164.0",
+    "three": "^0.164.1",
     "uplot": "^1.6.31"
   },
   "peerDependencies": {
@@ -40,19 +52,19 @@
     "react-dom": ">=18.0.0"
   },
   "devDependencies": {
+    "@storybook/addon-essentials": "^8.0.0",
+    "@storybook/react": "^8.0.0",
+    "@storybook/react-vite": "^8.0.0",
     "@testing-library/react": "^14.2.0",
     "@types/leaflet": "^1.9.8",
     "@types/react": "^18.2.0",
-    "@types/three": "^0.164.0",
+    "@types/three": "^0.164.1",
     "jsdom": "^24.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "storybook": "^8.0.0",
     "tsup": "^8.0.0",
     "typescript": "^5.4.0",
-    "vitest": "^1.6.0",
-    "@storybook/react": "^8.0.0",
-    "@storybook/react-vite": "^8.0.0",
-    "@storybook/addon-essentials": "^8.0.0",
-    "storybook": "^8.0.0"
+    "vitest": "^1.6.0"
   }
 }
