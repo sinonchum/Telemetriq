@@ -1,0 +1,14 @@
+{
+  "name": "@telemetriq/benchmarks",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "playback": "tsx playbackBenchmark.ts"
+  },
+  "dependencies": {
+    "@telemetriq/core": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0"
+  }
+}
