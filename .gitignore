@@ -1,6 +1,31 @@
+# Dependencies
 node_modules/
+
+# Build output
 dist/
-.vitepress/.temp
 *.tsbuildinfo
-.DS_Store
+
+# Storybook
 storybook-static/
+
+# VitePress
+.vitepress/.temp
+.vitepress/dist
+docs/node_modules
+
+# OS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# Plans (internal)
+docs/plans/
