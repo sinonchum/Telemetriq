@@ -169,10 +169,12 @@ export function WebGLPathRenderer({
     bufferRef.current = buffer;
 
     // Setup attributes
-    gl.useProgram(programRef.current);
-    const posLoc = gl.getAttribLocation(programRef.current, 'a_position');
-    const colorLoc = gl.getAttribLocation(programRef.current, 'a_color');
-    const resLoc = gl.getUniformLocation(programRef.current, 'u_resolution');
+    const prog = programRef.current;
+    if (!prog) return;
+    gl.useProgram(prog);
+    const posLoc = gl.getAttribLocation(prog, 'a_position');
+    const colorLoc = gl.getAttribLocation(prog, 'a_color');
+    const resLoc = gl.getUniformLocation(prog, 'u_resolution');
 
     gl.enableVertexAttribArray(posLoc);
     gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 20, 0);
@@ -182,8 +184,8 @@ export function WebGLPathRenderer({
     gl.uniform2f(resLoc, canvas.width, canvas.height);
 
     // Set unused uniforms
-    const translateLoc = gl.getUniformLocation(programRef.current, 'u_translate');
-    const scaleLoc = gl.getUniformLocation(programRef.current, 'u_scale');
+    const translateLoc = gl.getUniformLocation(prog, 'u_translate');
+    const scaleLoc = gl.getUniformLocation(prog, 'u_scale');
     gl.uniform2f(translateLoc, 0, 0);
     gl.uniform1f(scaleLoc, 1.0);
 
