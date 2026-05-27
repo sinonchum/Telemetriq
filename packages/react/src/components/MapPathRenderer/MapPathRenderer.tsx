@@ -69,7 +69,7 @@ export function MapPathRenderer({
 
       // Draw path as polyline segments
       for (let i = 1; i < positions.length; i++) {
-        const seg = L.polyline(
+        L.polyline(
           [[positions[i-1].lat, positions[i-1].lon], [positions[i].lat, positions[i].lon]],
           { color: positions[i].color || '#06b6d4', weight: 3 }
         ).addTo(map);
