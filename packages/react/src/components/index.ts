@@ -5,3 +5,4 @@ export * from './gauges';
 export * from './ComparisonChart';
 export * from './MapPathRenderer';
 export * from './WebGLPathRenderer';
+export * from './PathRenderer3D';

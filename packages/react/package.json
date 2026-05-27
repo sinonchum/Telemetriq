@@ -22,7 +22,7 @@
   },
   "files": ["dist", "README.md"],
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts --external react",
+    "build": "tsup src/index.ts --format esm,cjs --dts --external react --external three",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src/",
     "test": "vitest run",
@@ -32,6 +32,7 @@
   "dependencies": {
     "@telemetriq/core": "workspace:*",
     "leaflet": "^1.9.4",
+    "three": "^0.164.0",
     "uplot": "^1.6.31"
   },
   "peerDependencies": {
@@ -42,6 +43,7 @@
     "@testing-library/react": "^14.2.0",
     "@types/leaflet": "^1.9.8",
     "@types/react": "^18.2.0",
+    "@types/three": "^0.164.0",
     "jsdom": "^24.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

@@ -8,4 +8,7 @@ export * from './playback/PlaybackController';
 export * from './createTelemetriqEngine';
 export * from './multi/createMultiEngine';
 export * from './transforms/decimate';
+export * from './transforms/exportCSV';
+export * from './transforms/sliceDataset';
+export * from './transforms/mergeDatasets';
 export * from './streaming/StreamingAdapter';
