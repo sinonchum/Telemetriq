@@ -7,3 +7,4 @@ export * from './interpolation/getValueAt';
 export * from './playback/PlaybackController';
 export * from './createTelemetriqEngine';
 export * from './multi/createMultiEngine';
+export * from './transforms/decimate';

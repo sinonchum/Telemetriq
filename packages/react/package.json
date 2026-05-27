@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "@telemetriq/core": "workspace:*",
+    "leaflet": "^1.9.4",
     "uplot": "^1.6.31"
   },
   "peerDependencies": {
