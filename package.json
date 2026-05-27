@@ -1,6 +1,7 @@
 {
   "name": "telemetriq",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "typecheck": "pnpm -r typecheck",
     "lint": "pnpm -r lint",
