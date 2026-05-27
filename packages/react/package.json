@@ -16,7 +16,9 @@
     "build": "tsup src/index.ts --format esm,cjs --dts --external react",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src/",
-    "test": "vitest run"
+    "test": "vitest run",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@telemetriq/core": "workspace:*",
@@ -34,6 +36,10 @@
     "react-dom": "^18.2.0",
     "tsup": "^8.0.0",
     "typescript": "^5.4.0",
-    "vitest": "^1.6.0"
+    "vitest": "^1.6.0",
+    "@storybook/react": "^8.0.0",
+    "@storybook/react-vite": "^8.0.0",
+    "@storybook/addon-essentials": "^8.0.0",
+    "storybook": "^8.0.0"
   }
 }
