@@ -17,7 +17,12 @@ export function useTelemetriq(): TelemetriqEngine {
 
 export function usePlaybackState(): Ref<PlaybackState> {
   const engine = useTelemetriq();
-  const state = ref<PlaybackState>(engine.getState()) as Ref<PlaybackState>;
+  const state = ref<PlaybackState>({
+    playing: false,
+    currentTime: engine.getCurrentTime(),
+    playbackRate: 1,
+    loop: false,
+  }) as Ref<PlaybackState>;
   const unsub = engine.subscribeState((s) => { state.value = s; });
   onUnmounted(unsub);
   return state;

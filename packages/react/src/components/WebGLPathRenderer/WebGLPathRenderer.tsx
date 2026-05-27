@@ -81,7 +81,8 @@ export function WebGLPathRenderer({
   height = 400,
   position = { x: 'position.x', y: 'position.y' },
   colorBy,
-  marker = { visible: true, radius: 6, color: '#06b6d4' },
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  marker: _marker = { visible: true, radius: 6, color: '#06b6d4' },
 }: WebGLPathRendererProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engine = useTelemetriq();
@@ -199,10 +200,7 @@ export function WebGLPathRenderer({
     };
   }, [engine, position, colorBy, height, initGL]);
 
-  // Marker overlay via 2D canvas would be complex in pure WebGL; use a DOM overlay instead
-  const currentTime = engine.getCurrentTime();
-  const markerX = engine.getValueAt(position.x, currentTime);
-  const markerY = engine.getValueAt(position.y, currentTime);
+  // TODO: Add marker overlay (DOM-based or WebGL points) for current position
 
   return (
     <div className="tq-webgl-path-renderer" style={{ position: 'relative', width: '100%', height }}>
