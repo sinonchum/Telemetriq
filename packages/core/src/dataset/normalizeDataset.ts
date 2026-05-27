@@ -2,42 +2,61 @@ import type { TelemetriqDataset } from '../types';
 
 export type NormalizedChannel = {
   data: Float64Array;
+  type: 'number' | 'boolean' | 'string';
 };
 
 export type NormalizedDataset = {
   timestamps: Float64Array;
   channels: Map<string, NormalizedChannel>;
+  positions?: {
+    x?: Float64Array;
+    y?: Float64Array;
+    z?: Float64Array;
+    lat?: Float64Array;
+    lon?: Float64Array;
+    alt?: Float64Array;
+  };
 };
 
 export function normalizeDataset(dataset: TelemetriqDataset): NormalizedDataset {
-  const samples = dataset.samples;
-  const n = samples.length;
-
+  const n = dataset.samples.length;
   const timestamps = new Float64Array(n);
-  const channelKeys = dataset.channels.map((c) => c.key);
   const channels = new Map<string, NormalizedChannel>();
 
-  for (const key of channelKeys) {
-    channels.set(key, { data: new Float64Array(n) });
+  for (const ch of dataset.channels) {
+    channels.set(ch.key, { data: new Float64Array(n), type: ch.type });
+  }
+
+  const positionKeys = new Set<string>();
+  let positions: NormalizedDataset['positions'] | undefined;
+  for (const sample of dataset.samples) {
+    if (sample.position) {
+      for (const key of Object.keys(sample.position)) {
+        positionKeys.add(key);
+      }
+    }
+  }
+  if (positionKeys.size > 0) {
+    positions = {};
+    for (const key of positionKeys) {
+      (positions as any)[key] = new Float64Array(n);
+    }
   }
 
   for (let i = 0; i < n; i++) {
-    timestamps[i] = samples[i].t;
-    for (const key of channelKeys) {
-      const raw = samples[i].values[key];
-      const ch = channels.get(key)!;
-      if (raw === null || raw === undefined) {
-        ch.data[i] = NaN;
-      } else if (typeof raw === 'number') {
-        ch.data[i] = raw;
-      } else if (typeof raw === 'boolean') {
-        ch.data[i] = raw ? 1 : 0;
-      } else {
-        // string — stored as NaN in Float64Array; read from samples directly
-        ch.data[i] = NaN;
+    const sample = dataset.samples[i];
+    timestamps[i] = sample.t;
+    for (const ch of dataset.channels) {
+      const val = sample.values[ch.key];
+      const arr = channels.get(ch.key)!.data;
+      arr[i] = val == null ? NaN : Number(val);
+    }
+    if (positions && sample.position) {
+      for (const key of positionKeys) {
+        (positions as any)[key][i] = sample.position[key] ?? NaN;
       }
     }
   }
 
-  return { timestamps, channels };
+  return { timestamps, channels, positions };
 }
