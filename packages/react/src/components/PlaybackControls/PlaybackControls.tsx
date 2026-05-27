@@ -39,6 +39,11 @@ export function PlaybackControls({
           {rates.map((r) => (<option key={r} value={r}>{r}x</option>))}
         </select>
       )}
+      {showLoopToggle && (
+        <button className="tq-loop-btn" onClick={() => seek(0)} aria-label="Loop">
+          🔁
+        </button>
+      )}
     </div>
   );
 }
