@@ -8,14 +8,7 @@ export type NormalizedChannel = {
 export type NormalizedDataset = {
   timestamps: Float64Array;
   channels: Map<string, NormalizedChannel>;
-  positions?: {
-    x?: Float64Array;
-    y?: Float64Array;
-    z?: Float64Array;
-    lat?: Float64Array;
-    lon?: Float64Array;
-    alt?: Float64Array;
-  };
+  positions?: Record<string, Float64Array>;
 };
 
 export function normalizeDataset(dataset: TelemetriqDataset): NormalizedDataset {
@@ -39,7 +32,7 @@ export function normalizeDataset(dataset: TelemetriqDataset): NormalizedDataset 
   if (positionKeys.size > 0) {
     positions = {};
     for (const key of positionKeys) {
-      (positions as any)[key] = new Float64Array(n);
+      positions[key] = new Float64Array(n);
     }
   }
 
@@ -53,7 +46,7 @@ export function normalizeDataset(dataset: TelemetriqDataset): NormalizedDataset 
     }
     if (positions && sample.position) {
       for (const key of positionKeys) {
-        (positions as any)[key][i] = sample.position[key] ?? NaN;
+        positions[key][i] = sample.position[key] ?? NaN;
       }
     }
   }

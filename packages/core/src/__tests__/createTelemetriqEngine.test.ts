@@ -2,11 +2,13 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { createTelemetriqEngine } from '../createTelemetriqEngine';
 import type { TelemetriqDataset } from '../types';
 
+const g = globalThis as unknown as Record<string, (...args: unknown[]) => unknown>;
+
 beforeEach(() => {
   vi.useFakeTimers();
   let id = 0;
-  (globalThis as any).requestAnimationFrame = (cb: FrameRequestCallback) => ++id;
-  (globalThis as any).cancelAnimationFrame = () => {};
+  g['requestAnimationFrame'] = () => ++id;
+  g['cancelAnimationFrame'] = () => {};
 });
 
 afterEach(() => {

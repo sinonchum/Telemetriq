@@ -2,17 +2,20 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { PlaybackController } from '../playback/PlaybackController';
 
 // Mock requestAnimationFrame/cancelAnimationFrame for Node environment
+const g = globalThis as unknown as Record<string, (...args: unknown[]) => unknown>;
+
 beforeEach(() => {
   vi.useFakeTimers();
   let id = 0;
   const callbacks = new Map<number, FrameRequestCallback>();
-  (globalThis as any).requestAnimationFrame = (cb: FrameRequestCallback) => {
+  g['requestAnimationFrame'] = (_cb: unknown) => {
+    const cb = _cb as FrameRequestCallback;
     const i = ++id;
     callbacks.set(i, cb);
     return i;
   };
-  (globalThis as any).cancelAnimationFrame = (id: number) => {
-    callbacks.delete(id);
+  g['cancelAnimationFrame'] = (id: unknown) => {
+    callbacks.delete(id as number);
   };
 });
 
