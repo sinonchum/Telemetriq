@@ -8,5 +8,6 @@ export function usePlaybackControls() {
     pause: useCallback(() => engine.pause(), [engine]),
     seek: useCallback((t: number) => engine.seek(t), [engine]),
     setRate: useCallback((r: number) => engine.setRate(r), [engine]),
+    setLoop: useCallback((loop: boolean) => engine.setLoop(loop), [engine]),
   };
 }

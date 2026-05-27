@@ -1,6 +1,7 @@
 import React from 'react';
 import { usePlaybackState } from '../../hooks/usePlaybackState';
 import { usePlaybackControls } from '../../hooks/usePlaybackControls';
+import { useTelemetriq } from '../../hooks/useTelemetriq';
 import './PlaybackControls.css';
 
 export type PlaybackControlsProps = {
@@ -24,8 +25,10 @@ export function PlaybackControls({
   showLoopToggle = true,
   showTimeDisplay = true,
 }: PlaybackControlsProps) {
-  const { playing, currentTime, playbackRate } = usePlaybackState();
-  const { play, pause, seek, setRate } = usePlaybackControls();
+  const { playing, currentTime, playbackRate, loop } = usePlaybackState();
+  const { play, pause, seek, setRate, setLoop } = usePlaybackControls();
+  const engine = useTelemetriq();
+  const duration = engine.getDuration();
 
   return (
     <div className="tq-playback-controls">
@@ -33,14 +36,14 @@ export function PlaybackControls({
         {playing ? '⏸' : '▶'}
       </button>
       {showTimeDisplay && <span className="tq-time-display">{formatTime(currentTime)}</span>}
-      <input className="tq-progress-bar" type="range" min={0} max={10000} value={currentTime} onChange={(e) => seek(Number(e.target.value))} />
+      <input className="tq-progress-bar" type="range" min={0} max={duration} value={currentTime} onChange={(e) => seek(Number(e.target.value))} />
       {showRateControl && (
         <select className="tq-rate-select" value={playbackRate} onChange={(e) => setRate(Number(e.target.value))}>
           {rates.map((r) => (<option key={r} value={r}>{r}x</option>))}
         </select>
       )}
       {showLoopToggle && (
-        <button className="tq-loop-btn" onClick={() => seek(0)} aria-label="Loop">
+        <button className="tq-loop-btn" onClick={() => setLoop(!loop)} aria-label="Loop" style={{ opacity: loop ? 1 : 0.5 }}>
           🔁
         </button>
       )}

@@ -23,8 +23,8 @@ export function MetricChart({ channels, height = 240, showLegend = true }: Metri
   const engine = useTelemetriq();
 
   const buildData = useCallback((): uPlot.AlignedData => {
-    const duration = 10000;
-    const step = 100;
+    const duration = engine.getDuration();
+    const step = Math.max(50, duration / 200);
     const timestamps: number[] = [];
     const channelData: number[][] = channels.map(() => []);
     for (let t = 0; t <= duration; t += step) {
@@ -59,7 +59,14 @@ export function MetricChart({ channels, height = 240, showLegend = true }: Metri
     const data = buildData();
     const chart = new uPlot(opts, data, containerRef.current);
     chartRef.current = chart;
-    const unsub = engine.subscribeTime(() => {});
+
+    // Update chart cursor on time changes to track playback position
+    const unsub = engine.subscribeTime((time: number) => {
+      if (chartRef.current) {
+        chartRef.current.setCursor({ left: chartRef.current.valToPos(time, 'x'), top: 0 });
+      }
+    });
+
     return () => { unsub(); chart.destroy(); };
   }, [buildData, height, engine, channels]);
 

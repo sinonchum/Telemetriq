@@ -14,8 +14,10 @@ export type MultiEngine = {
   pause(): void;
   seek(time: number): void;
   setRate(rate: number): void;
+  setLoop(loop: boolean): void;
   getCurrentTime(): number;
   getState(): PlaybackState;
+  getDuration(): number;
   subscribeTime(listener: (time: number) => void): () => void;
   subscribeState(listener: (state: PlaybackState) => void): () => void;
   destroy(): void;
@@ -53,8 +55,10 @@ export function createMultiEngine(
     pause: () => controller.pause(),
     seek: (t: number) => controller.seek(t),
     setRate: (r: number) => controller.setRate(r),
+    setLoop: (loop: boolean) => controller.setLoop(loop),
     getCurrentTime: () => controller.getCurrentTime(),
     getState: () => controller.getState(),
+    getDuration: () => end - start,
     subscribeTime: (listener) => controller.subscribeTime(listener),
     subscribeState: (listener) => controller.subscribeState(listener),
     destroy: () => {

@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { useTelemetriq } from '../../hooks/useTelemetriq';
+import { colorToRgbString } from '../../utils/color';
 
 export type MapPathRendererProps = {
   height?: number;
@@ -11,20 +12,6 @@ export type MapPathRendererProps = {
 
 const DEFAULT_TILE = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 const DEFAULT_ATTR = '&copy; OpenStreetMap contributors';
-
-function lerp(a: number, b: number, t: number) { return a + (b - a) * t; }
-
-function colorFromScale(value: number, domain: [number, number], range: string[]): string {
-  const t = Math.max(0, Math.min(1, (value - domain[0]) / (domain[1] - domain[0])));
-  if (range.length === 1) return range[0];
-  const segment = t * (range.length - 1);
-  const i = Math.min(Math.floor(segment), range.length - 2);
-  const localT = segment - i;
-  const c1 = range[i], c2 = range[i + 1];
-  const r1 = parseInt(c1.slice(1, 3), 16), g1 = parseInt(c1.slice(3, 5), 16), b1 = parseInt(c1.slice(5, 7), 16);
-  const r2 = parseInt(c2.slice(1, 3), 16), g2 = parseInt(c2.slice(3, 5), 16), b2 = parseInt(c2.slice(5, 7), 16);
-  return `rgb(${Math.round(lerp(r1, r2, localT))},${Math.round(lerp(g1, g2, localT))},${Math.round(lerp(b1, b2, localT))})`;
-}
 
 export function MapPathRenderer({
   height = 400,
@@ -45,10 +32,9 @@ export function MapPathRenderer({
     import('leaflet').then((L) => {
       if (cancelled || !containerRef.current) return;
 
-      // Collect positions
       const positions: Array<{ lat: number; lon: number; color?: string }> = [];
-      const duration = 10000;
-      const step = 100;
+      const duration = engine.getDuration();
+      const step = Math.max(50, duration / 200);
       for (let t = 0; t <= duration; t += step) {
         const lat = engine.getValueAt('position.lat', t);
         const lon = engine.getValueAt('position.lon', t);
@@ -56,7 +42,7 @@ export function MapPathRenderer({
         if (typeof lat === 'number' && typeof lon === 'number' && !isNaN(lat) && !isNaN(lon)) {
           positions.push({
             lat, lon,
-            color: colorBy && typeof colorVal === 'number' ? colorFromScale(colorVal, colorBy.scale.domain, colorBy.scale.range) : undefined,
+            color: colorBy && typeof colorVal === 'number' ? colorToRgbString(colorVal, colorBy.scale.domain, colorBy.scale.range) : undefined,
           });
         }
       }
@@ -67,7 +53,6 @@ export function MapPathRenderer({
       const bounds = L.latLngBounds(positions.map(p => [p.lat, p.lon] as [number, number]));
       map.fitBounds(bounds.pad(0.1));
 
-      // Draw path as polyline segments
       for (let i = 1; i < positions.length; i++) {
         L.polyline(
           [[positions[i-1].lat, positions[i-1].lon], [positions[i].lat, positions[i].lon]],
@@ -75,7 +60,6 @@ export function MapPathRenderer({
         ).addTo(map);
       }
 
-      // Marker
       const mapMarker = L.circleMarker([positions[0].lat, positions[0].lon], {
         radius: marker.radius || 6,
         color: '#fff',

@@ -18,8 +18,8 @@ export function ComparisonChart({ channelKey, height = 240, colors = DEFAULT_COL
   const multi = useMultiEngine();
 
   const buildData = useCallback((): uPlot.AlignedData => {
-    const duration = Math.max(...multi.sessions.map(() => 10000));
-    const step = 100;
+    const duration = multi.getDuration();
+    const step = Math.max(50, duration / 200);
     const timestamps: number[] = [];
     const sessionData: number[][] = multi.sessions.map(() => []);
 
@@ -56,7 +56,13 @@ export function ComparisonChart({ channelKey, height = 240, colors = DEFAULT_COL
     const data = buildData();
     const chart = new uPlot(opts, data, containerRef.current);
     chartRef.current = chart;
-    const unsub = multi.subscribeTime(() => {});
+
+    const unsub = multi.subscribeTime((time: number) => {
+      if (chartRef.current) {
+        chartRef.current.setCursor({ left: chartRef.current.valToPos(time, 'x'), top: 0 });
+      }
+    });
+
     return () => { unsub(); chart.destroy(); };
   }, [buildData, height, multi, colors]);
 

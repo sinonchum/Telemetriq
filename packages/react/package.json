@@ -33,6 +33,9 @@
     "dist",
     "README.md"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts --external react --external three",
     "typecheck": "tsc --noEmit",

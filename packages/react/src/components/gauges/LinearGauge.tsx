@@ -1,5 +1,6 @@
 import React from 'react';
 import { useChannelValue } from '../../hooks/useChannelValue';
+import './gauges.css';
 
 export type LinearGaugeProps = {
   channel: string;

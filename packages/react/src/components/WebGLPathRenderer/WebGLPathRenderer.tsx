@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 import { useTelemetriq } from '../../hooks/useTelemetriq';
+import { hexToRgb, colorToRgbTuple } from '../../utils/color';
 
 export type WebGLPathRendererProps = {
   height?: number;
@@ -32,26 +33,6 @@ const FRAG_SHADER = `
   }
 `;
 
-function hexToRgb(hex: string): [number, number, number] {
-  const r = parseInt(hex.slice(1, 3), 16) / 255;
-  const g = parseInt(hex.slice(3, 5), 16) / 255;
-  const b = parseInt(hex.slice(5, 7), 16) / 255;
-  return [r, g, b];
-}
-
-function lerpColor(c1: [number, number, number], c2: [number, number, number], t: number): [number, number, number] {
-  return [c1[0] + (c2[0] - c1[0]) * t, c1[1] + (c2[1] - c1[1]) * t, c1[2] + (c2[2] - c1[2]) * t];
-}
-
-function colorFromScale(value: number, domain: [number, number], range: string[]): [number, number, number] {
-  const t = Math.max(0, Math.min(1, (value - domain[0]) / (domain[1] - domain[0])));
-  const rgbs = range.map(hexToRgb);
-  if (rgbs.length === 1) return rgbs[0];
-  const segment = t * (rgbs.length - 1);
-  const i = Math.min(Math.floor(segment), rgbs.length - 2);
-  return lerpColor(rgbs[i], rgbs[i + 1], segment - i);
-}
-
 function createShader(gl: WebGLRenderingContext, type: number, source: string): WebGLShader | null {
   const shader = gl.createShader(type);
   if (!shader) return null;
@@ -81,8 +62,7 @@ export function WebGLPathRenderer({
   height = 400,
   position = { x: 'position.x', y: 'position.y' },
   colorBy,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  marker: _marker = { visible: true, radius: 6, color: '#06b6d4' },
+  marker = { visible: true, radius: 6, color: '#06b6d4' },
 }: WebGLPathRendererProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engine = useTelemetriq();
@@ -118,10 +98,9 @@ export function WebGLPathRenderer({
     const gl = initGL(canvas);
     if (!gl) return;
 
-    // Collect points
     const points: Array<{ x: number; y: number; color: [number, number, number] }> = [];
-    const duration = 10000;
-    const step = 50;
+    const duration = engine.getDuration();
+    const step = Math.max(25, duration / 200);
     let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
 
     for (let t = 0; t <= duration; t += step) {
@@ -132,8 +111,8 @@ export function WebGLPathRenderer({
         minX = Math.min(minX, xVal); maxX = Math.max(maxX, xVal);
         minY = Math.min(minY, yVal); maxY = Math.max(maxY, yVal);
         const color: [number, number, number] = colorBy && typeof colorVal === 'number'
-          ? colorFromScale(colorVal, colorBy.scale.domain, colorBy.scale.range)
-          : hexToRgb('#06b6d4');
+          ? colorToRgbTuple(colorVal, colorBy.scale.domain, colorBy.scale.range)
+          : hexToRgb(marker.color || '#06b6d4');
         points.push({ x: xVal, y: yVal, color });
       }
     }
@@ -141,7 +120,6 @@ export function WebGLPathRenderer({
     if (points.length === 0) return;
     boundsRef.current = { minX, maxX, minY, maxY };
 
-    // Build line segment vertices: [x, y, r, g, b] per vertex, 2 vertices per segment
     const pad = 20;
     const rangeX = (maxX - minX) || 1;
     const rangeY = (maxY - minY) || 1;
@@ -162,13 +140,11 @@ export function WebGLPathRenderer({
     }
     pointCountRef.current = vertices.length / 5;
 
-    // Upload buffer
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
     bufferRef.current = buffer;
 
-    // Setup attributes
     const prog = programRef.current;
     if (!prog) return;
     gl.useProgram(prog);
@@ -183,26 +159,25 @@ export function WebGLPathRenderer({
 
     gl.uniform2f(resLoc, canvas.width, canvas.height);
 
-    // Set unused uniforms
     const translateLoc = gl.getUniformLocation(prog, 'u_translate');
     const scaleLoc = gl.getUniformLocation(prog, 'u_scale');
     gl.uniform2f(translateLoc, 0, 0);
     gl.uniform1f(scaleLoc, 1.0);
 
-    // Draw
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.drawArrays(gl.LINES, 0, pointCountRef.current);
 
-    // Cleanup
+    // Marker overlay via 2D canvas overlay
+    // Note: WebGL marker would require a separate overlay canvas or point rendering pass.
+    // For now, the static path is rendered; marker is available on PathRenderer (Canvas2D).
+
     return () => {
       gl.deleteBuffer(buffer);
       if (programRef.current) gl.deleteProgram(programRef.current);
     };
-  }, [engine, position, colorBy, height, initGL]);
-
-  // TODO: Add marker overlay (DOM-based or WebGL points) for current position
+  }, [engine, position, colorBy, height, initGL, marker]);
 
   return (
     <div className="tq-webgl-path-renderer" style={{ position: 'relative', width: '100%', height }}>

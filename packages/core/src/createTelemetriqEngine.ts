@@ -15,7 +15,10 @@ export type TelemetriqEngine = {
   pause(): void;
   seek(time: number): void;
   setRate(rate: number): void;
+  setLoop(loop: boolean): void;
   getCurrentTime(): number;
+  getState(): PlaybackState;
+  getDuration(): number;
   getValueAt(channelKey: string, time: number): number | string | boolean | null;
   subscribeTime(listener: (time: number) => void): () => void;
   subscribeState(listener: (state: PlaybackState) => void): () => void;
@@ -45,7 +48,10 @@ export function createTelemetriqEngine(
     pause: () => controller.pause(),
     seek: (time: number) => controller.seek(time),
     setRate: (rate: number) => controller.setRate(rate),
+    setLoop: (loop: boolean) => controller.setLoop(loop),
     getCurrentTime: () => controller.getCurrentTime(),
+    getState: () => controller.getState(),
+    getDuration: () => dataset.time.end - dataset.time.start,
     getValueAt: (channelKey: string, time: number) =>
       getValueAt(normalized, dataset, channelKey, time),
     subscribeTime: (listener) => controller.subscribeTime(listener),

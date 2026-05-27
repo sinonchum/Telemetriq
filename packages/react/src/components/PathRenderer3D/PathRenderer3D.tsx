@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import type { Vector3, Mesh } from 'three';
 import { useTelemetriq } from '../../hooks/useTelemetriq';
+import { hexToColor, colorToNumber } from '../../utils/color';
 
 export type PathRenderer3DProps = {
   height?: number;
@@ -9,28 +10,6 @@ export type PathRenderer3DProps = {
   marker?: { visible?: boolean; radius?: number; color?: string };
   cameraPosition?: [number, number, number];
 };
-
-function hexToColor(hex: string): number {
-  return parseInt(hex.replace('#', ''), 16);
-}
-
-function lerpColor(c1: number, c2: number, t: number): number {
-  const r1 = (c1 >> 16) & 0xff, g1 = (c1 >> 8) & 0xff, b1 = c1 & 0xff;
-  const r2 = (c2 >> 16) & 0xff, g2 = (c2 >> 8) & 0xff, b2 = c2 & 0xff;
-  const r = Math.round(r1 + (r2 - r1) * t);
-  const g = Math.round(g1 + (g2 - g1) * t);
-  const b = Math.round(b1 + (b2 - b1) * t);
-  return (r << 16) | (g << 8) | b;
-}
-
-function colorFromScale(value: number, domain: [number, number], range: string[]): number {
-  const t = Math.max(0, Math.min(1, (value - domain[0]) / (domain[1] - domain[0])));
-  const colors = range.map(hexToColor);
-  if (colors.length === 1) return colors[0];
-  const segment = t * (colors.length - 1);
-  const i = Math.min(Math.floor(segment), colors.length - 2);
-  return lerpColor(colors[i], colors[i + 1], segment - i);
-}
 
 export function PathRenderer3D({
   height = 400,
@@ -67,19 +46,16 @@ export function PathRenderer3D({
       const controls = new OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
 
-      // Grid helper
       const grid = new THREE.GridHelper(200, 20, 0x333333, 0x222222);
       scene.add(grid);
 
-      // Axes helper
       const axes = new THREE.AxesHelper(50);
       scene.add(axes);
 
-      // Collect path points
       const points: Vector3[] = [];
       const colors: number[] = [];
-      const duration = 10000;
-      const step = 50;
+      const duration = engine.getDuration();
+      const step = Math.max(25, duration / 200);
 
       for (let t = 0; t <= duration; t += step) {
         const x = engine.getValueAt(position.x, t);
@@ -89,14 +65,13 @@ export function PathRenderer3D({
         if (typeof x === 'number' && typeof y === 'number' && typeof z === 'number') {
           points.push(new THREE.Vector3(x, y, z));
           const color = colorBy && typeof colorVal === 'number'
-            ? colorFromScale(colorVal, colorBy.scale.domain, colorBy.scale.range)
-            : hexToColor('#06b6d4');
+            ? colorToNumber(colorVal, colorBy.scale.domain, colorBy.scale.range)
+            : hexToColor(marker.color || '#06b6d4');
           colors.push(color);
         }
       }
 
       if (points.length > 1) {
-        // Create line with vertex colors
         const geometry = new THREE.BufferGeometry().setFromPoints(points);
         const colorArray = new Float32Array(colors.length * 3);
         for (let i = 0; i < colors.length; i++) {
@@ -110,7 +85,6 @@ export function PathRenderer3D({
         scene.add(line);
       }
 
-      // Marker sphere
       let markerMesh: Mesh | null = null;
       if (marker.visible && points.length > 0) {
         const markerGeo = new THREE.SphereGeometry(marker.radius || 0.5, 16, 16);
@@ -120,13 +94,11 @@ export function PathRenderer3D({
         scene.add(markerMesh);
       }
 
-      // Animation loop
       let animId: number;
       function animate() {
         animId = requestAnimationFrame(animate);
         controls.update();
 
-        // Update marker
         if (markerMesh) {
           const time = engine.getCurrentTime();
           const x = engine.getValueAt(position.x, time);
@@ -141,7 +113,6 @@ export function PathRenderer3D({
       }
       animate();
 
-      // Handle resize
       const resizeObserver = new ResizeObserver(() => {
         if (!containerRef.current) return;
         const w = containerRef.current.clientWidth;
