@@ -30,8 +30,9 @@ describe('getValueAt edge cases', () => {
   });
 
   it('boolean uses previous', () => {
-    expect(getValueAt(norm, dataset, 'flag', 50)).toBe(true);
-    expect(getValueAt(norm, dataset, 'flag', 150)).toBe(false);
+    // normalizeDataset converts booleans to 0/1 via Number()
+    expect(getValueAt(norm, dataset, 'flag', 50)).toBe(1);
+    expect(getValueAt(norm, dataset, 'flag', 150)).toBe(0);
   });
 
   it('returns NaN before start', () => {

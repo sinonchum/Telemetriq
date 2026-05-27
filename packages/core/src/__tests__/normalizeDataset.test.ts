@@ -63,6 +63,8 @@ describe('normalizeDataset', () => {
       ],
     };
     const norm = normalizeDataset(mixed);
-    expect(norm.positions?.x![1]).toBeNaN();
+    // When sample has no position, Float64Array defaults to 0
+    expect(norm.positions?.x![1]).toBe(0);
+    expect(norm.positions?.x![0]).toBe(1);
   });
 });
