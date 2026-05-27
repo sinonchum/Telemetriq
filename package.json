@@ -1,0 +1,13 @@
+{
+  "name": "telemetriq",
+  "private": true,
+  "scripts": {
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test",
+    "build": "pnpm -r build"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
