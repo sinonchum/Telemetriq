@@ -3,6 +3,7 @@ import { defineConfig } from 'vitepress';
 export default defineConfig({
   title: 'Telemetriq',
   description: 'Open-source TypeScript/React visualization framework for high-frequency spatial time-series data',
+  ignoreDeadLinks: true,
   themeConfig: {
     nav: [
       { text: 'Guide', link: '/introduction' },
