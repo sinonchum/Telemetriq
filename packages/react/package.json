@@ -18,11 +18,15 @@
     "lint": "eslint src/",
     "test": "vitest run"
   },
+  "dependencies": {
+    "uplot": "^1.6.31"
+  },
   "peerDependencies": {
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0"
   },
   "devDependencies": {
+    "@types/uplot": "^1.6.8",
     "@types/react": "^18.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
